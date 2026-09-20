@@ -3,7 +3,7 @@ projectTitle: string;
 description: string;
 tagline: string;
 demoUrl: string;
-techstack: string[];
+techStack: string[];
 features: string[];
 installationSteps: string[];
 authorName: string;

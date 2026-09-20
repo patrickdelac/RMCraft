@@ -1,6 +1,6 @@
 import {ReadmeData } from './types';
 export function rmgenerator(data: ReadmeData): string {
-    const techBadges = data.techstack
+    const techBadges = data.techStack
         .map((tech: string) => `![${tech}](https://img.shields.io/badge/-${encodeURIComponent(tech)}-333?style=flat-square)`)
         .join(' ')
     const featuresList = data.features

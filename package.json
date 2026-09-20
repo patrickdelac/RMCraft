@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "package-name": "^0.1.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}
