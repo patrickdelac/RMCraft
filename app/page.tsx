@@ -21,6 +21,27 @@ export default function Home() {
     githubUsername: '',
     license: 'MIT',
   });
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+  const markdownText = rmgenerator(formData);
+  await navigator.clipboard.writeText(markdownText);
+  setCopied(true);
+  setTimeout(() => setCopied(false), 2000);
+};
+
+const handleDownload = () => {
+  const markdownText = rmgenerator(formData);
+  const blob = new Blob([markdownText], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'README.md';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+  
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -224,14 +245,36 @@ export default function Home() {
         </div>
 
         {/* Right Column: Live Output Pane */}
-        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
-          <h2 className="text-lg font-semibold text-slate-200">Markdown Output</h2>
-          <div className="prose prose-invert max-w-none p-4 bg-slate-950 border border-slate-800 rounded-md overflow-x-auto">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {rmgenerator(formData)}
-        </ReactMarkdown>
-      </div>
-        </div>
+        {/* Right Column: Live Output Pane & Utility Controls */}
+<div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+  <div className="flex items-center justify-between">
+    <h2 className="text-lg font-semibold text-slate-200">Markdown Output</h2>
+    
+    <div className="flex gap-2">
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md transition-colors"
+      >
+        {copied ? '✓ Copied!' : 'Copy Markdown'}
+      </button>
+
+      <button
+        type="button"
+        onClick={handleDownload}
+        className="px-3 py-1.5 text-sm bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-md transition-colors"
+      >
+        Download README.md
+      </button>
+    </div>
+  </div>
+
+  <div className="prose prose-invert max-w-none p-4 bg-slate-950 border border-slate-800 rounded-md overflow-x-auto">
+    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {rmgenerator(formData)}
+    </ReactMarkdown>
+  </div>
+</div>
 
       </div>
     </main>
