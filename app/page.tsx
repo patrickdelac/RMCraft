@@ -1,4 +1,6 @@
 'use client';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import React, { useState } from 'react';
 import { ReadmeData } from '../lib/types';
@@ -224,9 +226,11 @@ export default function Home() {
         {/* Right Column: Live Output Pane */}
         <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
           <h2 className="text-lg font-semibold text-slate-200">Markdown Output</h2>
-          <pre className="p-4 bg-slate-950 border border-slate-800 rounded-md overflow-x-auto text-sm font-mono text-slate-300 whitespace-pre-wrap">
-            {rmgenerator(formData)}
-          </pre>
+          <div className="prose prose-invert max-w-none p-4 bg-slate-950 border border-slate-800 rounded-md overflow-x-auto">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {rmgenerator(formData)}
+        </ReactMarkdown>
+      </div>
         </div>
 
       </div>
