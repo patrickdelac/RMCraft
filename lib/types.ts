@@ -8,7 +8,7 @@ features: string[];
 installationSteps: string[];
 authorName: string;
 githubUsername: string;
-license: "MIT" | "Apache 2.0" | "GPL v3" | "None";
+license: "MIT" | "Apache-2.0" | "GPL-3.0" | "BSD-3-Clause" | "Unlicense";
 }
 /*
 Line 1, Export -> allows for later usage in different files. Uses this interface as a base model setting up variables for later on.

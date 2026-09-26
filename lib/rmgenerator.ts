@@ -1,38 +1,30 @@
-import {ReadmeData } from './types';
+import { ReadmeData } from './types';
+
 export function rmgenerator(data: ReadmeData): string {
     const techBadges = data.techStack
-        .map((tech: string) => `![${tech}](https://img.shields.io/badge/-${encodeURIComponent(tech)}-333?style=flat-square)`)
-        .join(' ')
+        .filter((tech) => tech.trim() !== '')
+        .map((tech) => `![${tech}](https://img.shields.io/badge/-${encodeURIComponent(tech)}-333?style=flat-square)`)
+        .join(' ');
     const featuresList = data.features
-        .filter((f: string) => f.trim() !== '')
-        .map((f: string) => `-${f}`)
-        .join('\n')
+        .filter((feature) => feature.trim() !== '')
+        .map((feature) => `- ${feature}`)
+        .join('\n');
     const installation = data.installationSteps
-        .filter((s:string) =>  s.trim() !== '')
-        .map((step: string, i: number) => `${i + 1}.${step}`)
-        .join('\n')
-    return `# ${data.projectTitle || 'Project Title'} 
-    > ${data.tagline ||  'A brief summary of the project'}
-    ${techBadges ? `### Tech Stack\n${techBadges}\n` : ''}
+        .filter((step) => step.trim() !== '')
+        .map((step, index) => `${index + 1}. ${step}`)
+        .join('\n');
 
-    ## Overview
-    ${data.description || 'Provide a detailed and well elaborated description of your project.'}
-    
-    ${data.demoUrl ? `[Live Demo](${data.demoUrl})\n` : ''}
-
-    ${featuresList ? `##Key Features \n${featuresList}\n` : ' '}
-
-    ${installation ? `##Installation & Setup\n\`\`\`\`bash\n${installation}\n` : ''}
-
-    ## Author
-    - **${data.authorName || 'Your Name'}** - [@${data.githubUsername || 'username'}](https://github.com/data.githubUsername || ' '})
-
-    ## Licensing 
-    This project is licensed under the **${data.license}** License 
-
-    `
-      
-    }
+    return [
+        `# ${data.projectTitle || 'Project Title'}\n\n> ${data.tagline || 'A brief summary of the project'}`,
+        techBadges ? `## Tech Stack\n\n${techBadges}` : '',
+        `## Overview\n\n${data.description || 'Provide a detailed and well elaborated description of your project.'}`,
+        data.demoUrl ? `[Live Demo](${data.demoUrl})` : '',
+        featuresList ? `## Key Features\n\n${featuresList}` : '',
+        installation ? `## Installation & Setup\n\n\`\`\`bash\n${installation}\n\`\`\`` : '',
+        `## Author\n\n- **${data.authorName || 'Your Name'}** - [@${data.githubUsername || 'username'}](https://github.com/${data.githubUsername || 'username'})`,
+        `## License\n\nThis project is licensed under the **${data.license}** license.`,
+    ].filter(Boolean).join('\n\n') + '\n';
+}
 
        
     /*

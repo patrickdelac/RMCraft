@@ -2,13 +2,15 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReadmeData } from '../lib/types';
 import { rmgenerator } from '../lib/rmgenerator';
 
 type ArrayField = 'techStack' | 'features' | 'installationSteps';
 
 export default function Home() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [themeLoaded, setThemeLoaded] = useState(false);
   const [formData, setFormData] = useState<ReadmeData>({
     projectTitle: '',
     tagline: '',
@@ -22,6 +24,19 @@ export default function Home() {
     license: 'MIT',
   });
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem('rmcraft-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') setTheme(savedTheme);
+    setThemeLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!themeLoaded) return;
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('rmcraft-theme', theme);
+  }, [theme, themeLoaded]);
+
   const handleCopy = async () => {
   const markdownText = rmgenerator(formData);
   await navigator.clipboard.writeText(markdownText);
@@ -69,12 +84,45 @@ const handleDownload = () => {
 };
 
   return (
-    <main className="min-h-screen bg-slate-900 text-slate-100 p-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <main className="workspace-shell" data-theme={theme}>
+      <div className="workspace-container">
+        <header className="workspace-header">
+          <a className="brand-lockup" href="#top" aria-label="RMCraft home">
+            <span className="brand-mark" aria-hidden="true">rm</span>
+            <span className="brand-name">rmcraft</span>
+          </a>
+          <div className="header-tools">
+            <div className="theme-switch" role="group" aria-label="Color theme">
+              <button
+                type="button"
+                className={theme === 'light' ? 'is-active' : ''}
+                aria-pressed={theme === 'light'}
+                onClick={() => setTheme('light')}
+              >
+                Light
+              </button>
+              <button
+                type="button"
+                className={theme === 'dark' ? 'is-active' : ''}
+                aria-pressed={theme === 'dark'}
+                onClick={() => setTheme('dark')}
+              >
+                Dark
+              </button>
+            </div>
+            <div className="live-indicator"><span />Live preview</div>
+          </div>
+        </header>
+
+        <div className="workspace-grid" id="top">
         
         {/* Left Column: Interactive Form Controls */}
-        <div className="space-y-6 bg-slate-800 p-6 rounded-xl border border-slate-700">
-          <h1 className="text-2xl font-bold text-sky-400">RMCraft Generator</h1>
+        <div className="editor-panel">
+          <div className="panel-intro">
+            <span className="eyebrow">README BUILDER</span>
+            <h1>Give your project a great first read.</h1>
+            <p>Shape the details. Your README takes form as you go.</p>
+          </div>
           
           {/* Project Details */}
           <div className="space-y-4">
@@ -246,15 +294,18 @@ const handleDownload = () => {
 
         {/* Right Column: Live Output Pane */}
         {/* Right Column: Live Output Pane & Utility Controls */}
-<div className="bg-slate-800 p-6 rounded-xl border border-slate-700 space-y-4">
+<div className="output-panel">
   <div className="flex items-center justify-between">
-    <h2 className="text-lg font-semibold text-slate-200">Markdown Output</h2>
+    <div className="output-heading">
+      <span className="eyebrow">YOUR DOCUMENT</span>
+      <h2>README.md</h2>
+    </div>
     
     <div className="flex gap-2">
       <button
         type="button"
         onClick={handleCopy}
-        className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-md transition-colors"
+        className="button button-secondary"
       >
         {copied ? '✓ Copied!' : 'Copy Markdown'}
       </button>
@@ -262,20 +313,21 @@ const handleDownload = () => {
       <button
         type="button"
         onClick={handleDownload}
-        className="px-3 py-1.5 text-sm bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-md transition-colors"
+        className="button button-primary"
       >
         Download README.md
       </button>
     </div>
   </div>
 
-  <div className="prose prose-invert max-w-none p-4 bg-slate-950 border border-slate-800 rounded-md overflow-x-auto">
+  <div className="markdown-preview">
     <ReactMarkdown remarkPlugins={[remarkGfm]}>
       {rmgenerator(formData)}
     </ReactMarkdown>
   </div>
 </div>
 
+        </div>
       </div>
     </main>
   );
